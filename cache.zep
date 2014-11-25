@@ -1,0 +1,7 @@
+
+namespace Limepie;
+
+class cache
+{
+
+}
