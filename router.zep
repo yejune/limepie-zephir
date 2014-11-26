@@ -32,10 +32,15 @@ class router
     public function __construct(routes)
     {
 
-        let this->routes    = routes;
-
+        let this->routes  = routes;
         this->setPathinfo();
-
+        if isset _SERVER["PATH_INFO"] {
+            var tmp;
+            let tmp = trim(_SERVER["PATH_INFO"], "/");
+            if tmp {
+                let this->segment = explode("/", tmp);
+            }
+        }
     }
 
     public function setAccess(mode, defaultVar = FALSE)
@@ -294,14 +299,13 @@ class router
                 let this->pathinfo  = "";
             }
         }
-        let this->segment   = [];
 
     }
 
     public function getParameter(key = NULL)
     {
 
-        if is_null(key) {
+        if !key {
             return this->parameter;
         }
 
@@ -322,7 +326,7 @@ class router
     public function getSegment(key = NULL)
     {
 
-        if is_null(key) {
+        if !key {
             return this->segment;
         }
 
