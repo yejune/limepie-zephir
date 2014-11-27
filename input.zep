@@ -19,24 +19,24 @@ class input
     public static function data(key)
     {
 
-        var className, tmp;
-        let tmp = explode("\\", get_called_class());
-        let className = end(tmp);
-        return self::data[className][key];
+        var input, tmp;
+        let tmp   = explode("\\", get_called_class());
+        let input = end(tmp);
+        return self::data[input][key];
 
     }
 
     public static function get($key)
     {
 
-        return self::data["Limepie\\input\\sanitize\\get"][key];
+        return self::data["get"][key];
 
     }
 
     public static function post($key)
     {
 
-        return self::data["Limepie\\input\\sanitize\\post"][key];
+        return self::data["post"][key];
 
     }
 
