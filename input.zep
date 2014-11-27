@@ -26,17 +26,17 @@ class input
 
     }
 
-    public static function get($key)
+    public static function get(key, callback=NULL)
     {
 
-        return self::data["get"][key];
+        return self::callback(callback, self::data["get"][key]);
 
     }
 
-    public static function post($key)
+    public static function post(key, callback=NULL)
     {
 
-        return self::data["post"][key];
+        return self::callback(callback, self::data["post"][key]);
 
     }
 
