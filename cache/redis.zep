@@ -20,18 +20,18 @@ class redis
         }
 
 
-                var data;
+        var data;
 
-                var definition;
-                let definition = options["value"];
+        var definition;
+        let definition = options["value"];
 
-                if (typeof definition == "object") && (definition instanceof \Closure) {
-                    let data = {definition}();
-                } else {
-                    let data = definition;
-                }
+        if (typeof definition == "object") && (definition instanceof \Closure) {
+            let data = {definition}();
+        } else {
+            let data = definition;
+        }
 
-                return data;
+        return data;
 
 
 

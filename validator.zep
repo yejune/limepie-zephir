@@ -192,27 +192,14 @@ final class Validator
             } else {
                 let method = "";
             }
-/*
-            var callmethod;
-            let callmethod = "\\Limepie\\validator\\method\\".method_name;
 
-*/
             if method {
                 if is_null(method) || {method}(this->context, value, param) {
                     let valid = TRUE;
                 } else {
                     let valid = FALSE;
                 }
-
             } else {
-                /*
-                pr(["------",callmethod,is_callable(callmethod),method_exists("\\Limepie\\validator\\method", method_name),is_callable(["\\Limepie\\validator\\method", method_name])]);
-                if is_callable(callmethod) {
-                    let valid = {callmethod}(this->context, value, param);
-                } else {
-                    let valid = FALSE;
-                }
-                */
                 throw new \limepie\validator\Exception("not found '".method_name."' validate rule");
             }
 
