@@ -7,8 +7,8 @@ class Controller
 
     public framework;
     private router;
-    protected segment; // number
-    protected parameter;
+    protected segments; // number
+    protected parameters;
 
     public function __construct()
     {
@@ -16,8 +16,8 @@ class Controller
         let this->framework = framework::getInstance();
         this->setRouter(this->framework->getRouter());
 
-        let this->segment   = this->getRouter()->getSegment();
-        let this->parameter = this->getRouter()->getParameter();
+        let this->segments   = this->getRouter()->getSegments();
+        let this->parameters = this->getRouter()->getParameters();
 
     }
 

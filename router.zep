@@ -11,9 +11,9 @@ class router
 
     private pathinfo;
     private routes;
-    private args                = [];
-    private segment             = [];
-    private parameter           = [];
+    private arguments           = [];
+    private segments            = [];
+    private parameters          = [];
     private basedir             = "";
     private prefix              = "";
     private access              = "front";
@@ -28,6 +28,7 @@ class router
     private actionSuffix        = "Action";
     private controllerSuffix    = "Controller";
     private notFound;
+    private errorInfo           = [];
 
     public function __construct(routes)
     {
@@ -38,7 +39,7 @@ class router
             var tmp;
             let tmp = trim(_SERVER["PATH_INFO"], "/");
             if tmp {
-                let this->segment = explode("/", tmp);
+                let this->segments = explode("/", tmp);
             }
         }
     }
@@ -147,10 +148,10 @@ class router
 
     }
 
-    public function getArgs()
+    public function getArguments()
     {
 
-        return this->args;
+        return this->arguments;
 
     }
 
@@ -302,36 +303,42 @@ class router
 
     }
 
-    public function getParameter(key = NULL)
+    public function getParameters()
     {
 
-        if !key {
-            return this->parameter;
-        }
+        return this->parameters;
 
-        if isset this->parameter[key] {
-            return this->parameter[key];
+    }
+
+    public function getParameter(key)
+    {
+
+        if isset this->parameters[key] {
+            return this->parameters[key];
         }
         return NULL;
 
     }
 
-    public function getParam(key = NULL)
+    public function getParam(key)
     {
 
         return this->getParameter(key);
 
     }
 
-    public function getSegment(key = NULL)
+    public function getSegments()
     {
 
-        if !key {
-            return this->segment;
-        }
+        return this->segments;
 
-        if isset this->segment[key] {
-            return this->segment[key];
+    }
+
+    public function getSegment(key)
+    {
+
+        if isset this->segments[key] {
+            return this->segments[key];
         }
         return NULL;
 
@@ -361,24 +368,25 @@ class router
     public function routing()
     {
 
-        var i, parameter, defaultVar, rule, key, value, m1, _path, c;
+        var i, parameters, defaultVar, rule, key, value, m1, _path, c;
 
         if !this->routes || !is_array(this->routes) || !count(this->routes) {
-            let this->routes["(?P<module>[^/]+)?"."(?:/(?P<controller>[^/]+))?"."(?:/(?P<action>[^/]+))?"."(?:/(?P<parameter>.*))?"] = []; //"((?P<access>back)(?:/)?)?".
+            let this->routes["(?P<module>[^/]+)?"."(?:/(?P<controller>[^/]+))?"."(?:/(?P<action>[^/]+))?"."(?:/(?P<parameters>.*))?"] = []; //"((?P<access>back)(?:/)?)?".
         }
 
-        let this->parameter = [];
+        let this->parameters = [];
+        let this->arguments = [];
         let m1 = NULL;
         for rule, defaultVar in this->routes  {
             if preg_match("#^".rule."#", this->pathinfo, m1) {
-                let parameter = this->getSystemVariables();
-                let this->parameter = defaultVar + parameter; // defaultVar 우선
+                let parameters = this->getSystemVariables();
+                let this->parameters = defaultVar + parameters; // defaultVar 우선
 
                 let _path   = [];
-                if isset m1["parameter"] {
-                    if trim(m1["parameter"]) != "" {
-                        let _path   = explode("/",rtrim(m1["parameter"], "/"));;
-                        let this->args = _path;
+                if isset m1["parameters"] {
+                    if trim(m1["parameters"]) != "" {
+                        let _path   = explode("/",rtrim(m1["parameters"], "/"));;
+                        let this->arguments = _path;
                     }
                 }
 
@@ -391,9 +399,9 @@ class router
                             && FALSE == in_array(_path[i], this->systemVariables)
                         {
                             if isset _path[i+1] {
-                                let this->parameter[_path[i]] = _path[i+1];
+                                let this->parameters[_path[i]] = _path[i+1];
                             } else {
-                                let this->parameter[_path[i]] = "";
+                                let this->parameters[_path[i]] = "";
                             }
                         }
                     }
@@ -401,7 +409,7 @@ class router
 
                 for key, value in m1 {
                     if !is_numeric(key) && value {
-                        let this->parameter[key] = value;
+                        let this->parameters[key] = value;
                     }
                 }
                 let this->matchRoute = [rule : defaultVar];
@@ -409,7 +417,7 @@ class router
             }
         }
 
-        return this->parameter;
+        return this->parameters;
 
     }
 
@@ -426,4 +434,23 @@ class router
         return this->notFound;
 
     }
+
+    public function setError(errorMessage, errorCode, requireFileInfo)
+    {
+
+        let this->errorInfo = [
+            "errorMessage"    : errorMessage,
+            "errorCode"       : errorCode,
+            "requireFileInfo" : requireFileInfo
+        ];
+
+    }
+
+    public function getError()
+    {
+
+        return this->errorInfo;
+
+    }
+
 }

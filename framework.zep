@@ -36,7 +36,7 @@ class framework
 
     }
 
-    private function run(args = [])
+    private function run(arguments = [])
     {
 
         var access, module, controller, action, basedir, prefix, className, actionName, baseFolderName, namespaceName, fileName, folderName, callClassName, requireFileInfo;
@@ -72,8 +72,8 @@ class framework
         let folderName      = dirname(fileName);
         let callClassName   = namespaceName."\\".className;
 
-        if !args {
-            let args = this->getRouter()->getArgs();
+        if !arguments {
+            let arguments = this->getRouter()->getArguments();
         }
 
         let requireFileInfo = [
@@ -92,7 +92,7 @@ class framework
             }
 
             if !class_exists(callClassName, FALSE) {
-                return this->notFound(this->getRouter()->getNotFound(), ["클레스 없음", "class_does_not_exist", requireFileInfo]);
+                return this->forwardNotFound(this->getRouter()->getNotFound(), arguments, "클레스 없음", "class_does_not_exist", requireFileInfo);
             }
 
             var requestMethod;
@@ -108,24 +108,24 @@ class framework
             let instance = new {callClassName};
 
             if TRUE === method_exists(instance, requestMethodActionName) && is_callable([instance, requestMethodActionName]) {
-                return call_user_func_array([instance, requestMethodActionName], args);
+                return call_user_func_array([instance, requestMethodActionName], arguments);
             } elseif TRUE === method_exists(instance, actionName) && is_callable([instance, actionName]) {
-                return call_user_func_array([instance, actionName], args);
+                return call_user_func_array([instance, actionName], arguments);
             } else {
-                return this->notFound(this->getRouter()->getNotFound(), ["메소드 없음", "method_does_not_exist", requireFileInfo]);
+                return this->forwardNotFound(this->getRouter()->getNotFound(), arguments, "메소드 없음", "method_does_not_exist", requireFileInfo);
             }
 
         } else {
             if !is_dir(folderName) {
-                return this->notFound(this->getRouter()->getNotFound(), ["폴더 없음", "folder_does_not_exist", requireFileInfo]);
+                return this->forwardNotFound(this->getRouter()->getNotFound(), arguments, "폴더 없음", "folder_does_not_exist", requireFileInfo);
             } else {
-                return this->notFound(this->getRouter()->getNotFound(), ["파일 없음", "file_does_not_exist", requireFileInfo]);
+                return this->forwardNotFound(this->getRouter()->getNotFound(), arguments, "파일 없음", "file_does_not_exist", requireFileInfo);
             }
         }
 
     }
 
-    private function notFound(routes = [], args = [])
+    private function forwardNotFound(routes = [], arguments = [], errorMessage, errorCode, requireFileInfo)
     {
 
         var prevRouter, framework, newRouter;
@@ -135,28 +135,29 @@ class framework
         let framework  = self::getInstance();
         framework->setRouter(this->getRouter());
         let newRouter  = framework->getRouter();
+        newRouter->setError(errorMessage, errorCode, requireFileInfo);
 
         if prevRouter->getMatchRoute() == newRouter->getMatchRoute() {
-            throw new \limepie\router\exception(("error 404route."), "error 404route", args);
+            throw new \limepie\router\exception(("error 404route."), "error 404route", arguments);
         }
-        return framework->dispatch(args);
+        return framework->dispatch(arguments);
 
     }
 
     public function forward(config)
     {
 
-        var args;
-        if isset config["args"] {
-            let args = config["args"];
+        var arguments;
+        if isset config["arguments"] {
+            let arguments = config["arguments"];
         } else {
-            let args = [];
+            let arguments = [];
         }
-        return this->_forward(config["route"], args);
+        return this->_forward(config["route"], arguments);
 
     }
 
-    private function _forward(routes = [], args = [])
+    private function _forward(routes = [], arguments = [])
     {
 
         var prevRouter, framework, newRouter;
@@ -168,16 +169,16 @@ class framework
         let newRouter  = framework->getRouter();
 
         if prevRouter->getMatchRoute() == newRouter->getMatchRoute() {
-            throw new \limepie\router\exception(("error forward route."), "error foward route", args);
+            throw new \limepie\router\exception(("error forward route."), "error foward route", arguments);
         }
-        return framework->dispatch(args);
+        return framework->dispatch(arguments);
 
     }
 
-    public function dispatch(args = [])
+    public function dispatch(arguments = [])
     {
 
-        return this->run(args);
+        return this->run(arguments);
 
     }
 }
