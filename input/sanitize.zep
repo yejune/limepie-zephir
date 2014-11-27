@@ -10,7 +10,7 @@ class sanitize extends input
 
         if(in_array(name, ["email", "url", "int", "float", "safe", "unsafe", "htmlescape", "htmlentities","string", "bool"])) {
             var func;
-            let func = "self::get".name;
+            let func = "self::".name."Rule";
 
             return call_user_func_array(func, arguments);
         } else {
@@ -19,7 +19,7 @@ class sanitize extends input
 
     }
 
-    public static function getemail(key, callback=NULL)
+    public static function emailRule(key, callback=NULL)
     {
 
         var sanitized;
@@ -31,7 +31,7 @@ class sanitize extends input
 
     }
 
-    public static function geturl(key, callback=NULL)
+    public static function urlRule(key, callback=NULL)
     {
 
         var sanitized;
@@ -43,7 +43,7 @@ class sanitize extends input
 
     }
 
-    public static function getint(key, callback=NULL)
+    public static function intRule(key, callback=NULL)
     {
 
         var sanitized;
@@ -55,7 +55,7 @@ class sanitize extends input
 
     }
 
-    public static function getfloat(key, callback=NULL)
+    public static function floatRule(key, callback=NULL)
     {
 
         var sanitized, option;
@@ -68,45 +68,42 @@ class sanitize extends input
 
     }
 
-    public static function getsafe(key, callback=NULL)
+    public static function safeRule(key, callback=NULL)
     {
 
         return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_STRING));
 
     }
 
-    public static function getunsafe(key, callback=NULL)
+    public static function unsafeRule(key, callback=NULL)
     {
 
-        var value;
-        let value = filter_var(parent::data(key), FILTER_UNSAFE_RAW);
-
-        return parent::callback(callback, value);
+        return parent::callback(callback, filter_var(parent::data(key), FILTER_UNSAFE_RAW));
 
     }
 
-    public static function getstring(key, callback=NULL)
+    public static function stringRule(key, callback=NULL)
     {
 
         return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_STRING));
 
     }
 
-    public static function gethtmlentities(key, callback=NULL)
+    public static function htmlentitiesRule(key, callback=NULL)
     {
 
         return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_FULL_SPECIAL_CHARS));
 
     }
 
-    public static function gethtmlescape(key, callback=NULL)
+    public static function htmlescapeRule(key, callback=NULL)
     {
 
         return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_SPECIAL_CHARS));
 
     }
 
-    public static function getbool(key, callback=NULL)
+    public static function boolRule(key, callback=NULL)
     {
 
         return parent::callback(callback, filter_var(parent::data(key), FILTER_VALIDATE_BOOLEAN));
