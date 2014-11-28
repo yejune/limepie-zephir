@@ -20,7 +20,6 @@ class router
     private module              = "main";
     private controller          = "index";
     private action              = "index";
-    private rootdir             = "";
     private matchRoute;
     private systemVariables     = ["access", "basedir","module","action","controller","prefix"];
     private controllerDir       = "<basedir>/<module>/<access>";
@@ -131,20 +130,6 @@ class router
     {
 
         return this->controllerNamespace;
-
-    }
-
-    public function setRootdir(r)
-    {
-
-        let this->rootdir = r."/";
-
-    }
-
-    public function getRootdir()
-    {
-
-        return this->rootdir;
 
     }
 

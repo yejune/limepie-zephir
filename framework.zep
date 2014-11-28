@@ -68,7 +68,7 @@ class framework
             , "<action>"        : action
         ]);
 
-        let fileName        = this->getRouter()->getRootdir().(baseFolderName."/".className.".php");
+        let fileName        = stream_resolve_include_path(baseFolderName."/".className.".php");
         let folderName      = dirname(fileName);
         let callClassName   = namespaceName."\\".className;
 

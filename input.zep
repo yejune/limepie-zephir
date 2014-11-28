@@ -10,8 +10,9 @@ class input
     {
 
         let self::data = [
-            "get"  : _GET,
-            "post" : _POST
+            "get"    : _GET,
+            "post"   : _POST,
+            "cookie" : _COOKIE
         ];
 
     }

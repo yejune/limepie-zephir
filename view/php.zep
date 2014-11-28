@@ -134,7 +134,7 @@ class php
                 , "<action>"        : action
             ]);
 
-            let this->tpl_[fid] = \limepie\config::get("rootdir") . DS . addFolder . path;
+            let this->tpl_[fid] = stream_resolve_include_path(addFolder . path);
             return this->tpl_[fid];
 
         }

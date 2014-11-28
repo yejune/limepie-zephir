@@ -18,6 +18,9 @@ class config
     public static function set(name, callback = FALSE)
     {
 
+        if !is_array(self::$temp) {
+            let self::temp = [];
+        }
         if is_array(name) {
             let self::temp = array_merge(self::temp, name);
 
@@ -89,7 +92,7 @@ class config
 
         var e;
         try {
-            let file = config::get("rootdir").DIRECTORY_SEPARATOR.file;
+            let file = stream_resolve_include_path(file);
             if file_exists(file) && is_readable(file) {
                 return parse_ini_file(file, TRUE);
             } else {
@@ -106,7 +109,7 @@ class config
 
         var e, config;
         try {
-            let file = config::get("rootdir") . DIRECTORY_SEPARATOR . file;
+            let file = stream_resolve_include_path(file);
             if file_exists(file) && is_readable(file) {
                 let config = require file;
                 self::set(config);
@@ -125,7 +128,7 @@ class config
         var e, a, error;
 
         try {
-            let file = config::get("rootdir").DIRECTORY_SEPARATOR.file;
+            let file = stream_resolve_include_path(file);
             if file_exists(file) && is_readable(file) {
                 let a = json_decode(file_get_contents(file), TRUE);
                 let error = json_last_error();
