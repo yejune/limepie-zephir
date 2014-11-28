@@ -10,9 +10,12 @@ class input
     {
 
         let self::data = [
-            "get"    : _GET,
-            "post"   : _POST,
-            "cookie" : _COOKIE
+            "get"       : _GET,
+            "post"      : _POST,
+            "cookie"    : _COOKIE,
+            "parameter" : \limepie\framework::getInstance()->getRouter()->getParameters(),
+            "argument"  : \limepie\framework::getInstance()->getRouter()->getArguments(),
+            "segment"   : \limepie\framework::getInstance()->getRouter()->getSegments()
         ];
 
     }

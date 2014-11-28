@@ -11,9 +11,13 @@ class router
 
     private pathinfo;
     private routes;
-    private arguments           = [];
+
+    // segments는 url을 /로 자른것으로 forward되어도 변하지 않음
     private segments            = [];
+
+    private arguments           = [];
     private parameters          = [];
+
     private basedir             = "";
     private prefix              = "";
     private access              = "front";
@@ -28,18 +32,50 @@ class router
     private controllerSuffix    = "Controller";
     private notFound;
     private errorInfo           = [];
+    private allowName           = "#^([a-z0-9_\-\.]+)$#i";
+    private bootstrap           = "";
 
     public function __construct(routes)
     {
 
         let this->routes  = routes;
         this->setPathinfo();
+
         if isset _SERVER["PATH_INFO"] {
             var tmp;
             let tmp = trim(_SERVER["PATH_INFO"], "/");
             if tmp {
-                let this->segments = explode("/", tmp);
+                var tmp2, pathvalue;
+                let tmp2 = explode("/", tmp);
+                for pathvalue in tmp2 {
+                    if preg_match(this->allowName, pathvalue) {
+                        let this->segments[] = pathvalue;
+                    } else {
+                        let this->segments[] = NULL;
+                    }
+                }
+
             }
+        }
+
+    }
+
+    public function bootstrap(callback) {
+
+        let this->bootstrap = callback;
+
+    }
+
+    public function runBootstrap() {
+
+        if(this->bootstrap) {
+            var definition;
+            let definition = this->bootstrap;
+
+            var tmp;
+            let tmp = {definition}();
+            let this->bootstrap = NULL;
+            return tmp;
         }
     }
 
@@ -353,10 +389,10 @@ class router
     public function routing()
     {
 
-        var i, parameters, defaultVar, rule, key, value, m1, _path, c;
+        var i, parameters, defaultVar, rule, key, value, m1, _path,tmp, pathvalue, c;
 
         if !this->routes || !is_array(this->routes) || !count(this->routes) {
-            let this->routes["(?P<module>[^/]+)?"."(?:/(?P<controller>[^/]+))?"."(?:/(?P<action>[^/]+))?"."(?:/(?P<parameters>.*))?"] = []; //"((?P<access>back)(?:/)?)?".
+            let this->routes["(?P<module>[a-z0-9_\-\.]+)?"."(?:/(?P<controller>[a-z0-9_\-\.]+))?"."(?:/(?P<action>[a-z0-9_\-\.]+))?"."(?:/(?P<parameters>[a-z0-9_\-\.\/]+))?"] = []; //"((?P<access>back)(?:/)?)?".
         }
 
         let this->parameters = [];
@@ -367,12 +403,13 @@ class router
                 let parameters = this->getSystemVariables();
                 let this->parameters = defaultVar + parameters; // defaultVar 우선
 
-                let _path   = [];
+                let _path = [];
                 if isset m1["parameters"] {
                     if trim(m1["parameters"]) != "" {
-                        let _path   = explode("/",rtrim(m1["parameters"], "/"));;
+                        let _path = explode("/", rtrim(m1["parameters"], "/"));
                         let this->arguments = _path;
                     }
+                    unset m1["parameters"];
                 }
 
                 let c = count(_path) - 1;
@@ -401,8 +438,6 @@ class router
                 break;
             }
         }
-
-        return this->parameters;
 
     }
 

@@ -7,6 +7,7 @@ class framework
 
     private static instance = NULL;
     public router;
+    public prevRouter;
 
     public function __construct() {}
     public function __destruct() {}
@@ -26,6 +27,7 @@ class framework
 
         router->routing();
         let this->router = router;
+        router->runBootstrap();
 
     }
 
@@ -33,6 +35,20 @@ class framework
     {
 
         return this->router;
+
+    }
+
+    public function setPrevRouter( router )
+    {
+
+        let this->prevRouter = router;
+
+    }
+
+    public function getPrevRouter()
+    {
+
+        return this->prevRouter;
 
     }
 
@@ -68,7 +84,7 @@ class framework
             , "<action>"        : action
         ]);
 
-        let fileName        = stream_resolve_include_path(baseFolderName."/".className.".php");
+        let fileName        = baseFolderName."/".className.".php";
         let folderName      = dirname(fileName);
         let callClassName   = namespaceName."\\".className;
 
@@ -85,6 +101,7 @@ class framework
         ];
 
 
+        let fileName        = stream_resolve_include_path(fileName);
         if file_exists(fileName) && is_readable(fileName) {
 
             if FALSE == in_array(fileName, get_included_files()) {
@@ -128,16 +145,16 @@ class framework
     private function forwardNotFound(routes = [], arguments = [], errorMessage, errorCode, requireFileInfo)
     {
 
-        var prevRouter, framework, newRouter;
+        var framework, newRouter;
 
-        let prevRouter = clone this->getRouter();
+        this->setPrevRouter(clone this->getRouter());
         this->getRouter()->setRoutes(routes);
         let framework  = self::getInstance();
         framework->setRouter(this->getRouter());
         let newRouter  = framework->getRouter();
         newRouter->setError(errorMessage, errorCode, requireFileInfo);
 
-        if prevRouter->getMatchRoute() == newRouter->getMatchRoute() {
+        if this->getPrevRouter()->getMatchRoute() == newRouter->getMatchRoute() {
             throw new \limepie\router\exception(("error 404route."), "error 404route", arguments);
         }
         return framework->dispatch(arguments);
@@ -160,15 +177,15 @@ class framework
     private function _forward(routes = [], arguments = [])
     {
 
-        var prevRouter, framework, newRouter;
+        var framework, newRouter;
 
-        let prevRouter = clone this->getRouter();
+        this->setPrevRouter(clone this->getRouter());
         this->getRouter()->setRoutes(routes);
         let framework  = self::getInstance();
         framework->setRouter(this->getRouter());
         let newRouter  = framework->getRouter();
 
-        if prevRouter->getMatchRoute() == newRouter->getMatchRoute() {
+        if this->getPrevRouter()->getMatchRoute() == newRouter->getMatchRoute() {
             throw new \limepie\router\exception(("error forward route."), "error foward route", arguments);
         }
         return framework->dispatch(arguments);
