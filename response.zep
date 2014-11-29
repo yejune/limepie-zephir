@@ -2,13 +2,15 @@ namespace Limepie;
 
 class response
 {
-    public static function json($array)
+    public static function json(arr)
     {
-        return json_encode($array);
+        return json_encode(arr);
     }
 
-    public static function jsonp($array)
+    public static function jsonp(arr)
     {
-        return isset($_REQUEST["callback"]) ? $_REQUEST["callback"]."(".self::json($array).");" : self::json($array);
+        return isset(_REQUEST["callback"])
+                ? _REQUEST["callback"]."(".self::json(arr).");"
+                : self::json(arr);
     }
 }

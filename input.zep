@@ -6,7 +6,7 @@ class input
 
     public static data;
 
-    public static function init()
+    public static function initialize()
     {
 
         let self::data = [
@@ -41,6 +41,34 @@ class input
     {
 
         return self::callback(callback, self::data["post"][key]);
+
+    }
+
+    public static function cookie(key, callback=NULL)
+    {
+
+        return self::callback(callback, self::data["cookie"][key]);
+
+    }
+
+    public static function parameter(key, callback=NULL)
+    {
+
+        return self::callback(callback, self::data["parameter"][key]);
+
+    }
+
+    public static function argument(key, callback=NULL)
+    {
+
+        return self::callback(callback, self::data["argument"][key]);
+
+    }
+
+    public static function segment(key, callback=NULL)
+    {
+
+        return self::callback(callback, self::data["segment"][key]);
 
     }
 

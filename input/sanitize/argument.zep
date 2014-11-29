@@ -5,5 +5,4 @@ use Limepie\input\sanitize;
 class argument extends sanitize
 {
 
-
 }

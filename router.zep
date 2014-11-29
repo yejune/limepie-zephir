@@ -32,7 +32,6 @@ class router
     private controllerSuffix    = "Controller";
     private notFound;
     private errorInfo           = [];
-    private allowName           = "#^([a-z0-9_\-\.]+)$#i";
     private bootstrap           = "";
 
     public function __construct(routes)
@@ -45,22 +44,13 @@ class router
             var tmp;
             let tmp = trim(_SERVER["PATH_INFO"], "/");
             if tmp {
-                var tmp2, pathvalue;
-                let tmp2 = explode("/", tmp);
-                for pathvalue in tmp2 {
-                    if preg_match(this->allowName, pathvalue) {
-                        let this->segments[] = pathvalue;
-                    } else {
-                        let this->segments[] = NULL;
-                    }
-                }
-
+                let this->segments = explode("/", tmp);
             }
         }
 
     }
 
-    public function bootstrap(callback) {
+    public function setBootstrap(callback) {
 
         let this->bootstrap = callback;
 
@@ -77,6 +67,7 @@ class router
             let this->bootstrap = NULL;
             return tmp;
         }
+
     }
 
     public function setAccess(mode, defaultVar = FALSE)
@@ -392,7 +383,7 @@ class router
         var i, parameters, defaultVar, rule, key, value, m1, _path,tmp, pathvalue, c;
 
         if !this->routes || !is_array(this->routes) || !count(this->routes) {
-            let this->routes["(?P<module>[a-z0-9_\-\.]+)?"."(?:/(?P<controller>[a-z0-9_\-\.]+))?"."(?:/(?P<action>[a-z0-9_\-\.]+))?"."(?:/(?P<parameters>[a-z0-9_\-\.\/]+))?"] = []; //"((?P<access>back)(?:/)?)?".
+            let this->routes["(?P<module>[^/]+)?"."(?:/(?P<controller>[^/]+))?"."(?:/(?P<action>[^/]+))?"."(?:/(?P<parameters>.*))?"] = []; //"((?P<access>back)(?:/)?)?".
         }
 
         let this->parameters = [];
