@@ -30,6 +30,16 @@ class input
 
     }
 
+    public static function all()
+    {
+
+        var input, tmp;
+        let tmp   = explode("\\", get_called_class());
+        let input = end(tmp);
+        return self::data[input];
+
+    }
+
     public static function get(key, callback=NULL)
     {
 
