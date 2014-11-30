@@ -2,111 +2,93 @@
 namespace Limepie\input;
 use Limepie\input;
 
-class sanitize extends input
+class sanitize
 {
 
-    public static function __callStatic(name, arguments)
+    public static function getRaw(key)
     {
 
-        if(in_array(name, ["email", "url", "int", "float", "safe", "unsafe", "htmlescape", "htmlentities","string", "bool"])) {
-            var func;
-            let func = "self::".name."Rule";
-
-            return call_user_func_array(func, arguments);
-        } else {
-            throw new \exception("not support sanitize function name : ".name);
-        }
+        var input, tmp, value;
+        let tmp   = explode("\\", get_called_class());
+        let input = end(tmp);
+        return input::data[input][key];
 
     }
 
-    public static function emailRule(key, callback=NULL)
+    public static function email(key, defvar=NULL)
     {
 
         var sanitized;
-        let sanitized = filter_var(parent::data(key), FILTER_SANITIZE_EMAIL);
-        if filter_var(sanitized, FILTER_VALIDATE_EMAIL) {
-            return parent::callback(callback, sanitized);
+        let sanitized = filter_var(self::getRaw(key), FILTER_SANITIZE_EMAIL);
+        if !filter_var(sanitized, FILTER_VALIDATE_EMAIL) {
+            let sanitized = NULL;
         }
-        return NULL;
+        return input::getValue(sanitized, defvar);
 
     }
 
-    public static function urlRule(key, callback=NULL)
+    public static function url(key, defvar=NULL)
     {
 
         var sanitized;
-        let sanitized = filter_var(parent::data(key), FILTER_SANITIZE_URL);
-        if filter_var(sanitized, FILTER_VALIDATE_URL) {
-            return parent::callback(callback, sanitized);
+        let sanitized = filter_var(self::getRaw(key), FILTER_SANITIZE_URL);
+        if !filter_var(sanitized, FILTER_VALIDATE_URL) {
+            let sanitized = NULL;
         }
-        return NULL;
+        return input::getValue(sanitized, defvar);
 
     }
 
-    public static function intRule(key, callback=NULL)
+    public static function $int(key, defvar=NULL)
     {
 
         var sanitized;
-        let sanitized = filter_var(parent::data(key), FILTER_SANITIZE_NUMBER_INT);
-        if filter_var(sanitized, FILTER_VALIDATE_INT) {
-            return parent::callback(callback, sanitized);
+        let sanitized = filter_var(self::getRaw(key), FILTER_SANITIZE_NUMBER_INT);
+        if !filter_var(sanitized, FILTER_VALIDATE_INT) {
+            let sanitized = NULL;
         }
-        return NULL;
+        return input::getValue(sanitized, defvar);
 
     }
 
-    public static function floatRule(key, callback=NULL)
+    public static function $float(key, defvar=NULL)
     {
 
         var sanitized, option;
         let option = FILTER_FLAG_ALLOW_FRACTION|FILTER_FLAG_ALLOW_SCIENTIFIC;
-        let sanitized = filter_var(parent::data(key), FILTER_SANITIZE_NUMBER_FLOAT, option);
-        if filter_var(sanitized, FILTER_VALIDATE_FLOAT, option) {
-            return parent::callback(callback, sanitized);
+        let sanitized = filter_var(self::getRaw(key), FILTER_SANITIZE_NUMBER_FLOAT, option);
+        if !filter_var(sanitized, FILTER_VALIDATE_FLOAT, option) {
+            let sanitized = NULL;
         }
-        return NULL;
+        return input::getValue(sanitized, defvar);
 
     }
 
-    public static function safeRule(key, callback=NULL)
+    public static function safe(key, defvar=NULL)
     {
 
-        return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_STRING));
+        return input::getValue(filter_var(self::getRaw(key), FILTER_SANITIZE_STRING), defvar);
 
     }
 
-    public static function unsafeRule(key, callback=NULL)
+    public static function $string(key, defvar=NULL)
     {
 
-        return parent::callback(callback, filter_var(parent::data(key), FILTER_UNSAFE_RAW));
+        return input::getValue(filter_var(self::getRaw(key), FILTER_SANITIZE_STRING), defvar);
 
     }
 
-    public static function stringRule(key, callback=NULL)
+    public static function htmlentities(key, defvar=NULL)
     {
 
-        return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_STRING));
+        return input::getValue(filter_var(self::getRaw(key), FILTER_SANITIZE_FULL_SPECIAL_CHARS), defvar);
 
     }
 
-    public static function htmlentitiesRule(key, callback=NULL)
+    public static function htmlescape(key, defvar=NULL)
     {
 
-        return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_FULL_SPECIAL_CHARS));
-
-    }
-
-    public static function htmlescapeRule(key, callback=NULL)
-    {
-
-        return parent::callback(callback, filter_var(parent::data(key), FILTER_SANITIZE_SPECIAL_CHARS));
-
-    }
-
-    public static function boolRule(key, callback=NULL)
-    {
-
-        return parent::callback(callback, filter_var(parent::data(key), FILTER_VALIDATE_BOOLEAN));
+        return input::getValue(filter_var(self::getRaw(key), FILTER_SANITIZE_SPECIAL_CHARS), defvar);
 
     }
 

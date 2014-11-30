@@ -20,17 +20,14 @@ class input
 
     }
 
-    public static function data(key)
+    public static function unsafe(key, <\closure> callback)
     {
 
-        var input, tmp;
-        let tmp   = explode("\\", get_called_class());
-        let input = end(tmp);
-        return self::data[input][key];
+        return self::getValue(self::getRaw(key), callback);
 
     }
 
-    public static function all()
+    public static function unsafeAll()
     {
 
         var input, tmp;
@@ -40,55 +37,23 @@ class input
 
     }
 
-    public static function get(key, callback=NULL)
+    public static function getRaw(key)
     {
 
-        return self::callback(callback, self::data["get"][key]);
+        var input, tmp, value;
+        let tmp   = explode("\\", get_called_class());
+        let input = end(tmp);
+        return input::data[input][key];
 
     }
 
-    public static function post(key, callback=NULL)
+    public static function getValue(value=NULL, definition=NULL)
     {
 
-        return self::callback(callback, self::data["post"][key]);
-
-    }
-
-    public static function cookie(key, callback=NULL)
-    {
-
-        return self::callback(callback, self::data["cookie"][key]);
-
-    }
-
-    public static function parameter(key, callback=NULL)
-    {
-
-        return self::callback(callback, self::data["parameter"][key]);
-
-    }
-
-    public static function argument(key, callback=NULL)
-    {
-
-        return self::callback(callback, self::data["argument"][key]);
-
-    }
-
-    public static function segment(key, callback=NULL)
-    {
-
-        return self::callback(callback, self::data["segment"][key]);
-
-    }
-
-    protected static function callback(callback=NULL, value)
-    {
-
-        if (typeof callback == "object") && (callback instanceof \Closure) {
-            return {callback}(value);
-        } elseif callback && !value {
-            return callback;
+        if (typeof definition == "object") && (definition instanceof \Closure) {
+            return {definition}(value);
+        } elseif definition && !value {
+            return definition;
         } else {
             return value;
         }
